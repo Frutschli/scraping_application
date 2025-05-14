@@ -22,7 +22,7 @@ scraping_application/
 1. **Clone the Repository:**
 
    ```bash
-   git clone <your-repository-url>
+   git clone [<your-repository-url>](https://github.com/Frutschli/scraping_application)
    cd scraping_application
    ```
 2. **Set Up a Virtual Environment:**
