@@ -34,6 +34,7 @@ scraping_application/
 3. **Install Dependencies:**
 
    ```bash
+   ollama run lama3.2:3b
    pip install -r requirements.txt
    ```
 
