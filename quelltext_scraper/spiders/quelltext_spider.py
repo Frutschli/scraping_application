@@ -1,11 +1,16 @@
 import scrapy
+from scrapy.utils.reactor import install_reactor
+
+# Install the AsyncioSelectorReactor
+install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
+
 
 class QuelltextSpider(scrapy.Spider):
     name = 'quelltext'
     provided_urls = ["https://www.2txt.de/"]
     seen_urls = set()
 
-    def start_requests(self):
+    async def start(self):
         for url in self.provided_urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -26,20 +31,19 @@ class QuelltextSpider(scrapy.Spider):
         # Extract and format all <p> elements, including loose text between <br> tags
         paragraphs = response.xpath('//p//text() | //br/following-sibling::text()[1]').getall()
         combined_text = []
-        
+
         # Clean up the extracted text
         for text in paragraphs:
             cleaned_text = text.strip()
             if cleaned_text:  # Only add non-empty lines
                 combined_text.append(cleaned_text)
-        
+
         if combined_text:
             extracted_content.append("Paragraph: " + " ".join(combined_text))
-        
-            
+
         # Save the extracted content to a file
         filename = "quelltext.txt"
         with open(filename, 'w', encoding='utf-8') as f:
             f.write("\n".join(extracted_content))
-        
-        print("Crawling Complete")
+
+        self.logger.info("Crawling Complete")

@@ -4,11 +4,23 @@ import sys
 import re
 import requests
 import subprocess
+import yaml
+
+class Config:
+    def __init__(self, config_file='config.yaml'):
+        with open(config_file, 'r') as file:
+            config_data = yaml.safe_load(file)
+            for key, value in config_data.items():
+                setattr(self, key, value)
+config = Config()
 
 # Add the Scrapy project to the Python path
 scrapy_project_path = r".\quelltext_scraper"
 
-# Variable to store the final complete response
+# user interdace module
+
+
+
 final_response = ""
 
 def validate_url(url):
@@ -94,20 +106,19 @@ process.start()
 
 if __name__ == "__main__":
     # Prompt the user for a URL
-    user_url = input("Please enter a URL (example: https://www.2txt.de/): ").strip()
+    user_url = input("Please enter a URL (example: " + config.standard_url + "):" ).strip()
    
     # Use a default URL if the user presses enter without typing anythingclear
     if not user_url:
-        user_url = "https://www.2txt.de/"
-        print(f"[INFO] No URL provided. Using example URL: {user_url}")
+        user_url = config.standard_url
+        print(f"[INFO] No URL provided. Using example URL: {config.standard_url}")
     
     # Flag to control the loop
     continue_processing = True
     current_url = user_url
-    max_iterations = 5  # Safety limit to prevent infinite loops
     iteration = 0
     
-    while continue_processing and iteration < max_iterations:
+    while continue_processing and iteration < config.max_iterations:
         iteration += 1
         print(f"\n[INFO] Iteration {iteration} with URL: {current_url}")
         
@@ -139,8 +150,8 @@ if __name__ == "__main__":
             print(f"[ERROR] The URL {current_url} is not reachable. Exiting...")
             continue_processing = False
     
-    if iteration >= max_iterations:
-        print(f"[WARNING] Reached maximum iterations ({max_iterations}). Stopping to prevent infinite loop.")
+    if iteration >= config.max_iterations:
+        print(f"[WARNING] Reached maximum iterations ({config.max_iterations}). Stopping to prevent infinite loop.")
     
     print("[INFO] Process complete.")
     

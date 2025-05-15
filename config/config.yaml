@@ -1,0 +1,6 @@
+standard_url: "https://www.2txt.de/"
+max_iterations: 5
+scrapy_project_path: "./quelltext_scraper"
+output_file: "quelltext.txt"
+llm_model: "llama3.2:3b"
+spider_temp_file: "temp_spider_run.py"
