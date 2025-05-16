@@ -2,11 +2,10 @@
 """
 Main module that orchestrates the website crawling and information extraction process.
 """
-
 import sys
-
 from config import Config
 from utils.url_validator import validate_url
+from utils.url_cleaner import clean_url  # Import the new URL cleaner
 from quelltext_scraper.spider_manager import SpiderManager
 from data_extractor.html_parser import HTMLParser
 from llm_processor.ollama_client import OllamaClient
@@ -26,7 +25,12 @@ def main():
     ollama_client = OllamaClient(config)
     
     # Get initial URL from user
-    current_url = ui.get_initial_url()
+    url_input = ui.get_initial_url()
+    
+    # Clean the URL before processing
+    current_url = clean_url(url_input)
+    if current_url != url_input:
+        ui.display_url_cleaned(url_input, current_url)
     
     # Process control variables
     continue_processing = True
@@ -55,6 +59,12 @@ def main():
                         ui.display_success(current_url, response_text)
                         continue_processing = False
                     elif new_url:
+                        # Clean the new URL before continuing
+                        cleaned_new_url = clean_url(new_url)
+                        if cleaned_new_url != new_url:
+                            ui.display_url_cleaned(new_url, cleaned_new_url)
+                            new_url = cleaned_new_url
+                            
                         # Continue with a new URL
                         ui.display_continue_with_new_url(new_url)
                         current_url = new_url

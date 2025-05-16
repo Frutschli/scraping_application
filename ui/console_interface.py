@@ -28,6 +28,16 @@ class ConsoleInterface:
         
         return user_url
     
+    def display_url_cleaned(self, original_url, cleaned_url):
+        """
+        Displays information about URL cleaning.
+        
+        Args:
+            original_url (str): The original URL provided
+            cleaned_url (str): The cleaned URL
+        """
+        print(f"[INFO] URL cleaned: '{original_url}' → '{cleaned_url}'")
+    
     def display_iteration_start(self, iteration, url):
         """
         Displays information about the current iteration.

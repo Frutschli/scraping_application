@@ -35,10 +35,11 @@ class OllamaClient:
         stream = chat(
             model=self.config.llm_model,
             messages=[
-                {'role': 'system', 'content': "You are a computer Program trying to figure out who the Geschäftsführer of a website is. ONLY ANSWER IN THIS FORMAT: 'information_type: information' (example). Provide ONLY this: impressum_url, name_of_Geschäftsführer, relevant_emails, phone_numbers"},
+                {'role': 'system', 'content': "You are a computer Program trying to figure out who the Geschäftsführer or Geschäftsleitung or similar of a website is. ONLY ANSWER IN THIS FORMAT: 'impressum_url: impressum' (example). Provide ONLY this: impressum_url, name_of_Geschäftsführer, relevant_emails, phone_numbers"},
                 {'role': 'user', 'content': "Here are some links and text we could crawl from the website." + website_content},
             ],
             stream=True,
+            options={'temperature': 0}
         )
         
         for chunk in stream:

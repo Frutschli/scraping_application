@@ -43,7 +43,7 @@ scraping_application/
 To run the main automation script, use:
 
 ```bash
-python full_ollama_automation.py
+python main.py
 ```
 
 ## 📄 Requirements
