@@ -48,7 +48,7 @@ class ConsoleInterface:
         """
         print(f"\n[INFO] Iteration {iteration} with URL: {url}")
     
-    def display_success(self, url, response_text):
+    def display_success(self, url, response_text, process_type):
         """
         Displays success message and the final information.
         
@@ -56,10 +56,11 @@ class ConsoleInterface:
             url (str): The URL that was successfully processed
             response_text (str): The response text to display
         """
-        print(f"[SUCCESS] Found matching impressum_url: {url}")
-        print()
-        print("Final Information:")
-        print(response_text)
+        if process_type == "process_links":
+            print(f"[SUCCESS] Parsing all text on: {url}")
+        elif process_type == "process_text":
+            print("Final Information:")
+            print(response_text)
     
     def display_continue_with_new_url(self, new_url):
         """

@@ -1,6 +1,8 @@
 import scrapy
 import re
 from bs4 import BeautifulSoup
+#from scrapy.utils.project import get_project_settings
+
 
 class TextSpider(scrapy.Spider):
     name = 'text'

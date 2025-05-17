@@ -35,9 +35,10 @@ def main():
     # Process control variables
     continue_processing = True
     iteration = 0
+    process_type = config.standard_process 
     
     # Main processing loop
-    while continue_processing and iteration < config.max_iterations:
+    while continue_processing != False and iteration < config.max_iterations:
         iteration += 1
         ui.display_iteration_start(iteration, current_url)
         
@@ -45,21 +46,30 @@ def main():
         if validate_url(current_url):
             try:
                 # Run spider
-                if spider_manager.run_spider(current_url):
+                if spider_manager.run_spider(current_url, process_type):
                     # Load crawled data
-                    website_content = html_parser.load_crawled_data()
+                    website_content = html_parser.load_crawled_data(process_type)
+                    if process_type == "process_text":
+                        continue_processing = False
                     
                     # Process website with LLM
-                    success, new_url, response_text = ollama_client.process_website_data(
-                        website_content, current_url
-                    )
-                    
+                    if process_type == "process_links":
+                        success, new_url, response_text = ollama_client.process_website_data(
+                            website_content, current_url
+                        )
+                    elif process_type == "process_text":
+                        success, new_url, response_text = ollama_client.process_website_text(
+                            website_content, current_url
+                        )
+
+
                     if success:
                         # We found what we were looking for
-                        ui.display_success(current_url, response_text)
-                        continue_processing = False
+                        ui.display_success(current_url, response_text, process_type)
+                        #conimue_processing = False  
+                        process_type = "process_text"                    
                     elif new_url:
-                        # Clean the new URL before continuing
+                        # Clean the new URL before continuing 
                         cleaned_new_url = clean_url(new_url)
                         if cleaned_new_url != new_url:
                             ui.display_url_cleaned(new_url, cleaned_new_url)

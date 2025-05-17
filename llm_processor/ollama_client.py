@@ -1,4 +1,5 @@
 from ollama import chat
+from pydantic import BaseModel
 import re
 
 class OllamaClient:
@@ -30,7 +31,6 @@ class OllamaClient:
                 - response_text (str): The response from the LLM
         """
         print("Thinking...")
-        
         complete_response = ""
         stream = chat(
             model=self.config.llm_model,
@@ -41,7 +41,7 @@ class OllamaClient:
             stream=True,
             options={'temperature': 0}
         )
-        
+
         for chunk in stream:
             chunk_content = chunk['message']['content']
             complete_response += chunk_content  # Accumulate the chunks
@@ -64,3 +64,40 @@ class OllamaClient:
             print("No impressum_url found in the response")
         
         return False, None, None
+    
+    def process_website_text(self, website_content, current_url):
+        """
+        Processes website text through the LLM to extract specific information.
+        
+        Args:
+            website_content (str): The website content to process
+            current_url (str): The current URL being processed
+            
+        Returns:
+            tuple: (success, new_url, response_text)
+                - success (bool): Whether the processing was successful
+                - new_url (str): A new URL to process if found
+                - response_text (str): The response from the LLM
+        """
+        print("Thinking...")
+        
+        complete_response = ""
+        class Text(BaseModel):
+            name_of_Geschäftsführer: list[str] | None
+            relevant_emails: list[str] | None
+            relevant_phone_numbers: list[str] | None
+        response = chat(
+            model=self.config.llm_model,
+            messages=[
+                {'role': 'system', 'content': "You are a computer Program trying to extract data from this website. ONLY DATA THAT IS ACTUALLY PRESENT"},
+                {'role': 'user', 'content': "Here are some links and text we could crawl from the website." + website_content},
+            ],   
+            format=Text.model_json_schema(),
+            options={'temperature': 0}
+            )
+        text_data = Text.model_validate_json(response.message.content)
+        complete_response = str(text_data)
+        print()
+        
+        
+        return True, None, complete_response
